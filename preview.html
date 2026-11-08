@@ -1,0 +1,604 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MY OTT | Movie Streaming</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #080808;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 6%;
+    background: #101010;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    color: #e50914;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+nav {
+    display: flex;
+    gap: 20px;
+}
+
+nav button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+nav button:hover {
+    color: #e50914;
+}
+
+.hero {
+    padding: 100px 7%;
+    background: linear-gradient(90deg, #000, #181818, #090909);
+    min-height: 350px;
+}
+
+.hero h1 {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    color: #bbb;
+    margin-bottom: 25px;
+}
+
+.btn {
+    padding: 12px 22px;
+    border: none;
+    border-radius: 5px;
+    background: #e50914;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn:hover {
+    background: #b00610;
+}
+
+.section {
+    padding: 30px 6%;
+}
+
+.section h2 {
+    margin-bottom: 20px;
+}
+
+.search {
+    padding: 13px;
+    width: 100%;
+    max-width: 400px;
+    background: #222;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 5px;
+    margin-bottom: 25px;
+}
+
+.movies {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 20px;
+}
+
+.movie {
+    background: #181818;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: .3s;
+}
+
+.movie:hover {
+    transform: scale(1.04);
+}
+
+.movie img {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+    background: #333;
+}
+
+.movie-info {
+    padding: 12px;
+}
+
+.movie-info h3 {
+    font-size: 16px;
+    margin-bottom: 7px;
+}
+
+.movie-info p {
+    color: #aaa;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.movie-info button {
+    margin-top: 5px;
+    margin-right: 3px;
+    padding: 8px 12px;
+    font-size: 12px;
+}
+
+.upload-section {
+    display: none;
+    padding: 35px 6%;
+    background: #111;
+}
+
+.upload-section h2 {
+    margin-bottom: 20px;
+}
+
+.upload-form {
+    max-width: 600px;
+    display: grid;
+    gap: 15px;
+}
+
+.upload-form input,
+.upload-form textarea,
+.upload-form select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #444;
+    background: #222;
+    color: white;
+    border-radius: 5px;
+}
+
+.upload-form textarea {
+    min-height: 100px;
+}
+
+label {
+    font-size: 14px;
+    color: #ccc;
+}
+
+.player-section {
+    display: none;
+    padding: 30px 6%;
+    background: #111;
+}
+
+video {
+    width: 100%;
+    max-height: 500px;
+    background: black;
+    border-radius: 8px;
+}
+
+.player-section h2 {
+    margin: 15px 0;
+}
+
+footer {
+    padding: 30px;
+    text-align: center;
+    background: #111;
+    color: #777;
+    margin-top: 40px;
+}
+
+@media(max-width:600px) {
+    header {
+        padding: 15px;
+    }
+
+    .logo {
+        font-size: 21px;
+    }
+
+    nav {
+        gap: 10px;
+    }
+
+    nav button {
+        font-size: 12px;
+    }
+
+    .hero h1 {
+        font-size: 32px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">MY OTT.</div>
+
+    <nav>
+        <button onclick="showHome()">Home</button>
+        <button onclick="showUpload()">Upload</button>
+    </nav>
+</header>
+
+<section class="hero" id="home">
+    <h1>Unlimited Movies.<br>Unlimited Entertainment.</h1>
+    <p>Watch your favourite movies and web series anytime.</p>
+    <button class="btn" onclick="showUpload()">+ Upload Your Film</button>
+</section>
+
+<section class="section" id="library">
+    <h2>Explore Movies & Web Series</h2>
+
+    <input
+        type="text"
+        class="search"
+        id="search"
+        placeholder="Search movies or web series..."
+        oninput="renderMovies()"
+    >
+
+    <div class="movies" id="movies">
+        <p>Loading your library...</p>
+    </div>
+</section>
+
+<section class="upload-section" id="upload">
+    <h2>Upload Your Movie / Web Series</h2>
+
+    <form class="upload-form" id="uploadForm">
+
+        <label>Content Title</label>
+        <input type="text" id="title" placeholder="Enter movie name" required>
+
+        <label>Content Type</label>
+        <select id="type" required>
+            <option value="Movie">Movie</option>
+            <option value="Web Series">Web Series</option>
+            <option value="Short Film">Short Film</option>
+        </select>
+
+        <label>Genre</label>
+        <select id="genre">
+            <option>Action</option>
+            <option>Comedy</option>
+            <option>Drama</option>
+            <option>Thriller</option>
+            <option>Horror</option>
+            <option>Romance</option>
+            <option>Sci-Fi</option>
+            <option>Other</option>
+        </select>
+
+        <label>Release Year</label>
+        <input type="number" id="year" placeholder="2026" min="1900" max="2100">
+
+        <label>Language</label>
+        <select id="language">
+            <option>Malayalam</option>
+            <option>Tamil</option>
+            <option>English</option>
+            <option>Hindi</option>
+            <option>Telugu</option>
+            <option>Other</option>
+        </select>
+
+        <label>Description</label>
+        <textarea id="description" placeholder="Enter movie description..."></textarea>
+
+        <label>Upload Poster Image</label>
+        <input type="file" id="poster" accept="image/*" required>
+
+        <label>Upload Movie / Video File</label>
+        <input type="file" id="video" accept="video/*" required>
+
+        <button class="btn" type="submit" id="uploadBtn">
+            Upload Content
+        </button>
+
+        <p id="status"></p>
+
+    </form>
+</section>
+
+<section class="player-section" id="player">
+    <h2 id="playerTitle">Now Playing</h2>
+
+    <video id="videoPlayer" controls playsinline>
+        Your browser does not support video playback.
+    </video>
+
+    <p id="playerDescription"></p>
+
+    <br>
+    <button class="btn" onclick="closePlayer()">Close Player</button>
+</section>
+
+<footer>
+    <h3>MY OTT.</h3>
+    <p>My Movies. My Entertainment.</p>
+    <p>© 2026 MY OTT. All rights reserved.</p>
+</footer>
+
+<script>
+
+// IndexedDB database
+let db;
+
+const request = indexedDB.open("MyOTTDatabase", 1);
+
+request.onupgradeneeded = function(event) {
+    db = event.target.result;
+
+    if (!db.objectStoreNames.contains("movies")) {
+        db.createObjectStore("movies", {
+            keyPath: "id",
+            autoIncrement: true
+        });
+    }
+};
+
+request.onsuccess = function(event) {
+    db = event.target.result;
+    renderMovies();
+};
+
+request.onerror = function() {
+    alert("Database error. Please try another browser.");
+};
+
+// Show homepage
+function showHome() {
+    document.getElementById("upload").style.display = "none";
+    document.getElementById("player").style.display = "none";
+    document.getElementById("home").style.display = "block";
+    document.getElementById("library").style.display = "block";
+
+    renderMovies();
+}
+
+// Show upload page
+function showUpload() {
+    document.getElementById("home").style.display = "none";
+    document.getElementById("library").style.display = "none";
+    document.getElementById("player").style.display = "none";
+    document.getElementById("upload").style.display = "block";
+
+    window.scrollTo(0, 0);
+}
+
+// Upload movie
+document.getElementById("uploadForm").addEventListener("submit", function(e) {
+
+    e.preventDefault();
+
+    const title = document.getElementById("title").value;
+    const type = document.getElementById("type").value;
+    const genre = document.getElementById("genre").value;
+    const year = document.getElementById("year").value;
+    const language = document.getElementById("language").value;
+    const description = document.getElementById("description").value;
+
+    const posterFile = document.getElementById("poster").files[0];
+    const videoFile = document.getElementById("video").files[0];
+
+    if (!posterFile || !videoFile) {
+        alert("Please select both poster and video files.");
+        return;
+    }
+
+    if (!posterFile.type.startsWith("image/") ||
+        !videoFile.type.startsWith("video/")) {
+        alert("Please select a valid image and video.");
+        return;
+    }
+
+    const status = document.getElementById("status");
+    const uploadBtn = document.getElementById("uploadBtn");
+
+    status.textContent = "Saving your content...";
+    uploadBtn.disabled = true;
+
+    const movie = {
+        title,
+        type,
+        genre,
+        year,
+        language,
+        description,
+        poster: posterFile,
+        video: videoFile,
+        date: new Date().toISOString()
+    };
+
+    const transaction = db.transaction(["movies"], "readwrite");
+    const store = transaction.objectStore("movies");
+
+    store.add(movie);
+
+    transaction.oncomplete = function() {
+        status.textContent = "Successfully saved!";
+        document.getElementById("uploadForm").reset();
+        uploadBtn.disabled = false;
+
+        setTimeout(() => {
+            showHome();
+            status.textContent = "";
+        }, 800);
+    };
+
+    transaction.onerror = function() {
+        status.textContent = "Storage failed. Your browser may be out of space.";
+        uploadBtn.disabled = false;
+    };
+
+});
+
+// Display movies
+function renderMovies() {
+
+    if (!db) return;
+
+    const container = document.getElementById("movies");
+    const search = document.getElementById("search").value.toLowerCase();
+
+    container.innerHTML = "";
+
+    const transaction = db.transaction(["movies"], "readonly");
+    const store = transaction.objectStore("movies");
+
+    store.getAll().onsuccess = function(event) {
+
+        const movies = event.target.result;
+
+        const filtered = movies.filter(movie =>
+            movie.title.toLowerCase().includes(search) ||
+            movie.genre.toLowerCase().includes(search) ||
+            movie.type.toLowerCase().includes(search)
+        );
+
+        if (filtered.length === 0) {
+            container.innerHTML = "<p>No movies found. Upload your first film!</p>";
+            return;
+        }
+
+        filtered.reverse().forEach(movie => {
+
+            const card = document.createElement("div");
+            card.className = "movie";
+
+            const image = document.createElement("img");
+            image.src = URL.createObjectURL(movie.poster);
+            image.alt = movie.title;
+
+            const info = document.createElement("div");
+            info.className = "movie-info";
+
+            const title = document.createElement("h3");
+            title.textContent = movie.title;
+
+            const details = document.createElement("p");
+            details.textContent =
+                movie.type + " | " + movie.genre + " | " +
+                movie.year + " | " + movie.language;
+
+            const play = document.createElement("button");
+            play.className = "btn";
+            play.textContent = "▶ Watch";
+            play.onclick = () => playMovie(movie.id);
+
+            const remove = document.createElement("button");
+            remove.className = "btn";
+            remove.style.background = "#444";
+            remove.textContent = "Delete";
+            remove.onclick = () => deleteMovie(movie.id);
+
+            info.append(title, details, play, remove);
+            card.append(image, info);
+
+            container.appendChild(card);
+        });
+    };
+}
+
+// Play movie
+function playMovie(id) {
+
+    const transaction = db.transaction(["movies"], "readonly");
+    const store = transaction.objectStore("movies");
+
+    store.get(id).onsuccess = function(event) {
+
+        const movie = event.target.result;
+        if (!movie) return;
+
+        const player = document.getElementById("videoPlayer");
+
+        player.pause();
+
+        if (player.dataset.url) {
+            URL.revokeObjectURL(player.dataset.url);
+        }
+
+        const url = URL.createObjectURL(movie.video);
+
+        player.src = url;
+        player.dataset.url = url;
+
+        document.getElementById("playerTitle").textContent = movie.title;
+        document.getElementById("playerDescription").textContent =
+            movie.description;
+
+        document.getElementById("upload").style.display = "none";
+        document.getElementById("home").style.display = "none";
+        document.getElementById("library").style.display = "none";
+        document.getElementById("player").style.display = "block";
+
+        window.scrollTo(0, 0);
+
+        player.play().catch(() => {
+            // User can press the video play button.
+        });
+    };
+}
+
+// Close player
+function closePlayer() {
+
+    const player = document.getElementById("videoPlayer");
+
+    player.pause();
+    player.removeAttribute("src");
+    player.load();
+
+    if (player.dataset.url) {
+        URL.revokeObjectURL(player.dataset.url);
+        delete player.dataset.url;
+    }
+
+    showHome();
+}
+
+// Delete movie
+function deleteMovie(id) {
+
+    if (!confirm("Are you sure you want to delete this content?")) {
+        return;
+    }
+
+    const transaction = db.transaction(["movies"], "readwrite");
+
+    transaction.objectStore("movies").delete(id);
+
+    transaction.oncomplete = function() {
+        renderMovies();
+    };
+}
+
+</script>
+
+</body>
+</html>
